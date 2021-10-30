@@ -1,4 +1,5 @@
 #include "string.h"
+#include "string_util.h"
 
 #define VERBOSE true
 
@@ -11,13 +12,25 @@ namespace exercise
 	string::string(const char* _string)
 	{
 #if VERBOSE == true
-		printf("Copied String With Constructor.\n");
+		printf("Copied const char* to the buffer of String With Constructor.\n");
 #endif
 
-		_length = strlen(_string);
+		_length = string_length(_string);
 		_buffer = new char[_length];
 
 		memcpy(_buffer, _string, _length);
+	}
+
+	string::string(char*&& _string)
+	{
+#if VERBOSE == true
+		printf("Moved char* to buffer of String With Constructor.\n");
+#endif
+
+		_length = string_length(_string);
+		_buffer = _string;
+
+		_string = nullptr;
 	}
 
 	string::string(string& _string)
@@ -65,7 +78,7 @@ namespace exercise
 		_buffer = new char[1];
 		_buffer[0] = '\0';
 
-		_length = strlen(_buffer);
+		_length = string_length(_buffer);
 	}
 
 	bool string::operator==(const char* _string) const
@@ -155,11 +168,7 @@ namespace exercise
 		// your buffer will have the above mentioned non-sense:
 		concat_buffer[buffer_length - 1] = '\0';
 
-		string value(concat_buffer);
-
-		delete[] concat_buffer;
-
-		return value;
+		return string(std::move(concat_buffer));
 	}
 
 	string::~string()

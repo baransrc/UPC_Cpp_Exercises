@@ -11,6 +11,7 @@ namespace exercise
 	public:
 		string();
 		string(const char* _string);
+		string(char*&& _string);
 		string(string& _string);
 		string(string&& _string) noexcept;
 
