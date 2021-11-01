@@ -19,11 +19,14 @@ public:
 	bool CleanUp();
 
 public:
-
 	SDL_Texture* graphics = nullptr;
 	Animation idle;
 	Animation backward;
+	Animation forward;
 	iPoint position;
+	int x_clamp_min;
+	int x_clamp_max;
+	int y_default;
 };
 
 #endif // __MODULEPLAYER_H__

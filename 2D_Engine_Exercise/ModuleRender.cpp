@@ -4,12 +4,20 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "SDL/include/SDL.h"
+#include "Utilfuncs.h"
 
 ModuleRender::ModuleRender()
 {
-	camera.x = camera.y = 0;
+	camera.x = 0;
+	camera.y = 0;
 	camera.w = SCREEN_WIDTH * SCREEN_SIZE;
 	camera.h = SCREEN_HEIGHT* SCREEN_SIZE;
+
+	camera_lerping = false;
+	camera_lerp_destination = iPoint(camera.x, camera.y);
+	camera_lerp_start = camera_lerp_destination;
+	camera_lerp_speed = 0.0f;
+	camera_lerp_value = 0.0f;
 }
 
 // Destructor
@@ -52,7 +60,7 @@ update_status ModuleRender::Update()
 	// debug camera
 	int speed = 1;
 
-	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	/*if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		App->renderer->camera.y += speed;
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -62,7 +70,9 @@ update_status ModuleRender::Update()
 		App->renderer->camera.x += speed;
 
 	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		App->renderer->camera.x -= speed;
+		App->renderer->camera.x -= speed;*/
+
+	LerpToPosition();
 
 	return UPDATE_CONTINUE;
 }
@@ -115,4 +125,41 @@ bool ModuleRender::Blit(SDL_Texture* texture, int x, int y, SDL_Rect* section, f
 	}
 
 	return ret;
+}
+
+void ModuleRender::MoveCameraToPosition(iPoint position, float speed)
+{
+	camera_lerping = true;
+	camera_lerp_destination = position;
+	camera_lerp_speed = speed;
+	camera_lerp_value = 0.0f;
+	camera_lerp_start = iPoint(camera.x, camera.y);
+}
+
+void ModuleRender::LerpToPosition()
+{
+	if (!camera_lerping)
+	{
+		return;
+	}
+
+	camera_lerp_value += camera_lerp_speed;
+	camera_lerp_value = camera_lerp_value > 1.0f ? 1.0f : camera_lerp_value;
+	camera.x = utilfuncs::lerp(camera_lerp_start.x, camera_lerp_destination.x, camera_lerp_value);
+	camera.y= utilfuncs::lerp(camera_lerp_start.y, camera_lerp_destination.y, camera_lerp_value);
+
+	if (camera.x == camera_lerp_destination.x && camera.y == camera_lerp_destination.y)
+	{
+		camera_lerp_value = 1.0f;
+	}
+
+	if (camera_lerp_value == 1.0f)
+	{
+		camera_lerping = false;
+		camera_lerp_value = 0.0f;
+		camera_lerp_destination = {0,0};
+		camera_lerp_speed = 0.0f;
+		camera_lerp_value = 0.0f;
+		camera_lerp_start = {0,0};
+	}
 }

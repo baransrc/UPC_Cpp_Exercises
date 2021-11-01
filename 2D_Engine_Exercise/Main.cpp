@@ -6,6 +6,17 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
+
+//#define _CRTDBG_MAP_ALLOC
+//#include <crtdbg.h>
+//
+//#ifdef _DEBUG
+//#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+//#define new DBG_NEW
+//#endif
+
+
+
 enum main_states
 {
 	MAIN_CREATION,
@@ -19,6 +30,8 @@ Application* App = nullptr;
 
 int main(int argc, char ** argv)
 {
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
@@ -83,5 +96,6 @@ int main(int argc, char ** argv)
 
 	RELEASE( App);
 	LOG("Bye :)\n");
+
 	return main_return;
 }

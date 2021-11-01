@@ -55,6 +55,15 @@
     <ClInclude Include="ModuleInput.h">
       <Filter>Core Modules</Filter>
     </ClInclude>
+    <ClInclude Include="PingPong.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilfuncs.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleSceneHonda.h">
+      <Filter>Game Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -89,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSceneHonda.cpp">
+      <Filter>Game Modules</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

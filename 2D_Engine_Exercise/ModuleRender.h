@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "Point.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -22,9 +23,20 @@ public:
 
 	bool Blit(SDL_Texture* texture, int x, int y, SDL_Rect* section, float speed = 1.0f);
 
+	void MoveCameraToPosition(iPoint position, float speed);
+
+private:
+	void LerpToPosition();
+
 public:
 	SDL_Renderer* renderer = nullptr;
 	SDL_Rect camera;
+private:
+	bool camera_lerping;
+	float camera_lerp_value;
+	float camera_lerp_speed;
+	iPoint camera_lerp_start;
+	iPoint camera_lerp_destination;
 };
 
 #endif // __MODULERENDER_H__
