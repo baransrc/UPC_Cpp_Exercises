@@ -18,5 +18,9 @@ enum update_status
 #define SCREEN_HEIGHT 480
 #define FULLSCREEN false
 #define RESIZABLE true
+#define RENDERER_CULL_FACE true
+#define RENDERER_DEPTH_TEST true
+#define RENDERER_SCISSOR_TEST true
+#define RENDERER_STENCIL_TEST true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"

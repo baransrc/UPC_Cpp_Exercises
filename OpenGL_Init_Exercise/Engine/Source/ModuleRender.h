@@ -23,4 +23,5 @@ private:
 	void* context;
 	void InitializeGLEW();
 	void LogHardware();
+	void InitializeRenderPipelineOptions();
 };

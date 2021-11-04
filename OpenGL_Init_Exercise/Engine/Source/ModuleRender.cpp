@@ -22,11 +22,14 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 
-	//Initialize GLEW and OpenGL:
+	// Initialize GLEW and OpenGL:
 	InitializeGLEW();
 
-	//Log Hardware Details:
+	// Log Hardware Details:
 	LogHardware();
+
+	// Initialize Render Pipline Options According to the Settings in Globals.h:
+	InitializeRenderPipelineOptions();
 
 	// Random
 	std::srand(std::time(nullptr));
@@ -110,6 +113,51 @@ void ModuleRender::LogHardware()
 	LOG("Renderer: %s", glGetString(GL_RENDERER));
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+}
+
+void ModuleRender::InitializeRenderPipelineOptions()
+{
+	// Read Settings from Globals.h and Initialize Render Pipeline Options Accordingly:
+	
+	// Face Culling:
+	if (RENDERER_CULL_FACE == true)
+	{
+		glEnable(GL_CULL_FACE);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
+
+	// Depth Test:
+	if (RENDERER_DEPTH_TEST == true)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	// Scissor Test:
+	if (RENDERER_SCISSOR_TEST == true)
+	{
+		glEnable(GL_SCISSOR_TEST);
+	}
+	else
+	{
+		glDisable(GL_SCISSOR_TEST);
+	}
+
+	// Stencil Test:
+	if (RENDERER_STENCIL_TEST == true)
+	{
+		glEnable(GL_STENCIL_TEST);
+	}
+	else
+	{
+		glDisable(GL_STENCIL_TEST);
+	}
 }
 
 
