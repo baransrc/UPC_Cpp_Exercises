@@ -8,11 +8,12 @@ namespace exercise
 	private:
 		char* _buffer;
 		uint32_t _length;
+	
 	public:
 		string();
 		string(const char* _string);
 		string(char*&& _string);
-		string(string& _string);
+		string(const string& _string);
 		string(string&& _string) noexcept;
 
 		void print() const;
@@ -28,5 +29,7 @@ namespace exercise
 		string operator+(const string& _string) const;
 
 		~string();
+	private:
+		bool compare_with_same_length_string(const char* _string) const;
 	};
 }

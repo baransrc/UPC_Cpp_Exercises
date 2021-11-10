@@ -1,11 +1,15 @@
 #include "string.h"
 #include "string_util.h"
+#include <assert.h>
 
 #define VERBOSE true
 
 namespace exercise
 {
-	string::string() : _buffer(new char[0]), _length(0)
+	constexpr char NULL_CHAR = '\0';
+	constexpr int NULL_CHAR_PADDING = 1;
+
+	string::string() : _buffer(nullptr), _length(0)
 	{	
 	}
 
@@ -16,9 +20,10 @@ namespace exercise
 #endif
 
 		_length = string_length(_string);
-		_buffer = new char[_length];
+		_buffer = new char[_length + NULL_CHAR_PADDING];
 
 		memcpy(_buffer, _string, _length);
+		_buffer[_length] = NULL_CHAR;
 	}
 
 	string::string(char*&& _string)
@@ -33,16 +38,17 @@ namespace exercise
 		_string = nullptr;
 	}
 
-	string::string(string& _string)
+	string::string(const string& _string)
 	{
 #if VERBOSE == true
 		printf("Copied String With Constructor.\n");
 #endif
 
 		_length = _string._length;
-		_buffer = new char[_length];
+		_buffer = new char[_length + NULL_CHAR_PADDING];
 
 		memcpy(_buffer, _string._buffer, _length);
+		_buffer[_length] = NULL_CHAR;
 	}
 
 	string::string(string&& _string) noexcept
@@ -60,50 +66,40 @@ namespace exercise
 
 	void string::print() const
 	{
-		if (_length > 0)
-		{
-			for (uint32_t i = 0; i < _length; ++i)
-			{
-				printf("%c", _buffer[i]);
-			}
-		}
-	
-		printf("\n");
+		printf("%s\n", _buffer);
 	}
 
 	void string::clear()
 	{
 		delete[] _buffer;
 		
-		_buffer = new char[1];
-		_buffer[0] = '\0';
-
-		_length = string_length(_buffer);
+		_buffer = new char[NULL_CHAR_PADDING];
+		_buffer[0] = NULL_CHAR;
+		_length = 0;
 	}
 
 	bool string::operator==(const char* _string) const
 	{
-		uint32_t length = strlen(_string);
+		uint32_t length = string_length(_string);
 
 		if (_length != length)
 		{
 			return false;
 		}
 
-		for (uint32_t i = 0; i < length; ++i)
-		{
-			if (_string[i] != _buffer[i])
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return compare_with_same_length_string(_string);
 	}
 
 	bool string::operator==(const string& _string) const
 	{
-		return operator==(_string._buffer);
+		uint32_t length = string_length(_string._buffer);
+
+		if (_length != length)
+		{
+			return false;
+		}
+
+		return compare_with_same_length_string(_string._buffer);
 	}
 
 	string& string::operator=(string&& _string) noexcept
@@ -112,13 +108,9 @@ namespace exercise
 		printf("Moved String With Assignment.\n");
 #endif
 		// If _string points to the same memory address with this,
-		// i.e they are the same string, dereference this and return it's address:
-		// This can be done with one return statements and inverting the == to !=
-		// but I don't like that much of indentation in my code.
-		if (&_string == this) 
-		{
-			return *this;
-		}
+		// i.e they are the same string, assert since this should 
+		// never be made with move keyword:
+		assert(&_string != this);
 
 		delete[] _buffer;
 
@@ -140,9 +132,10 @@ namespace exercise
 		delete[] _buffer;
 
 		_length = _string._length;
-		_buffer = new char[_length];
+		_buffer = new char[_length + NULL_CHAR_PADDING];
 
 		memcpy(_buffer, _string._buffer, _length);
+		_buffer[_length] = NULL_CHAR;
 
 		return *this;
 	}
@@ -154,7 +147,7 @@ namespace exercise
 #endif
 		// New string will have the buffer size of the two 
 		// concatenated, plus one for "null-terminator":
-		uint32_t buffer_length = _string._length + _length + 1;
+		uint32_t buffer_length = _string._length + _length + NULL_CHAR_PADDING;
 
 		char* concat_buffer = new char[buffer_length];
 
@@ -166,17 +159,29 @@ namespace exercise
 		// Basically, char* are going way longer than they are allocated, and if you don't add
 		// the following so-called "null-character" along with a padding of +1 to the buffer, 
 		// your buffer will have the above mentioned non-sense:
-		concat_buffer[buffer_length - 1] = '\0';
+		concat_buffer[buffer_length - NULL_CHAR_PADDING] = NULL_CHAR;
 
 		return string(std::move(concat_buffer));
 	}
 
 	string::~string()
 	{
-		delete[] _buffer;
-
 #if VERBOSE == true
 		printf("Deleted String.\n");
 #endif
+		delete[] _buffer;
+	}
+
+	bool string::compare_with_same_length_string(const char* _string) const
+	{
+		for (uint32_t i = 0; i < _length; ++i)
+		{
+			if (_string[i] != _buffer[i])
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
